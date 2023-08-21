@@ -4,12 +4,13 @@ from typing import Optional
 from fastapi import HTTPException
 from pydantic import BaseModel, EmailStr, validator, constr
 
+
 LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
 
 
 class TunedModel(BaseModel):
     class Config:
-        """tells pydantic to convert even non dict obj to json"""
+        """Конвертация в том числе и не dict obj в json"""
         from_attributes = True
 
 

@@ -5,7 +5,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from starlette.testclient import TestClient
 import settings
+from security import create_access_token
 from main import app
+from datetime import timedelta
 import os
 import asyncio
 from db.session import get_db
@@ -97,3 +99,11 @@ async def create_user_in_database(asyncpg_pool):
             return await connection.execute("""INSERT INTO users VALUES ($1, $2, $3, $4, $5, $6)""",
                                             user_id, name, surname, email, is_active, hashed_password)
     return create_user_in_database
+
+
+def create_test_auth_headers_for_user(email: str) -> dict[str, str]:
+    access_token = create_access_token(
+        data={"sub": email},
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    return {"Authorization": f"Bearer {access_token}"}
