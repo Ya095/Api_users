@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.models import UserCreate, ShowUser, DeleteUserResponse, UpdateUserRequest, UpdateUserResponse
 from db.dals import UserDAL
 from db.session import get_db
+from hashing import Hasher
 
 
 logger = getLogger(__name__)
@@ -22,6 +23,7 @@ async def _create_new_user(body: UserCreate, db) -> ShowUser:
                 name=body.name,
                 surname=body.surname,
                 email=body.email,
+                hashed_password=Hasher.get_password_hash(body.password)
             )
             return ShowUser(
                 user_id=user.user_id,
@@ -44,14 +46,15 @@ async def _get_user_by_id(user_id, db) -> Union[ShowUser, None]:
     async with db as session:
         async with session.begin():
             user_dal = UserDAL(session)
-            user = await user_dal.get_user_by_id(user_id=user_id)
-            return ShowUser(
-                user_id=user.user_id,
-                name=user.name,
-                surname=user.surname,
-                email=user.email,
-                is_active=user.is_active,
-            )
+            user = await user_dal.get_user_by_id(user_id=user_id,)
+            if user is not None:
+                return ShowUser(
+                    user_id=user.user_id,
+                    name=user.name,
+                    surname=user.surname,
+                    email=user.email,
+                    is_active=user.is_active,
+                )
 
 
 async def _update_user_by_id(updated_user_params: dict, user_id: UUID, db) -> Union[UUID, None]:
@@ -75,7 +78,7 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> S
 async def delete_user(user_id: UUID, db: AsyncSession = Depends(get_db)) -> DeleteUserResponse:
     deleted_user_id = await _delete_user(user_id, db)
     if deleted_user_id is None:
-        raise HTTPException(status_code=404, detail={f'User with id {user_id} not found.'})
+        raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
     return DeleteUserResponse(deleted_user_id=deleted_user_id)
 
 
@@ -83,7 +86,7 @@ async def delete_user(user_id: UUID, db: AsyncSession = Depends(get_db)) -> Dele
 async def get_user_by_id(user_id: UUID, db: AsyncSession = Depends(get_db)) -> ShowUser:
     user = await _get_user_by_id(user_id, db)
     if user is None:
-        raise HTTPException(status_code=404, detail={f"User with {user_id} not found."})
+        raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
     return user
 
 

@@ -7,7 +7,8 @@ async def test_delete_user(client, create_user_in_database, get_user_from_databa
         "name": "Egor",
         "surname": "Yakovlev",
         "email": "egor@exemple.com",
-        "is_active": True
+        "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
 
     await create_user_in_database(**user_data)
@@ -19,7 +20,7 @@ async def test_delete_user(client, create_user_in_database, get_user_from_databa
     assert user_from_db["name"] == user_data["name"]
     assert user_from_db["surname"] == user_data["surname"]
     assert user_from_db["email"] == user_data["email"]
-    assert user_from_db["is_active"] is True
+    assert user_from_db["is_active"] is False
     assert user_from_db["user_id"] == user_data["user_id"]
 
 
@@ -27,4 +28,4 @@ async def test_delete_user_not_found(client):
     user_id = uuid4()
     resp = client.delete(f"/user/?user_id={user_id}")
     assert resp.status_code == 404
-    assert resp.json() == {'detail': f'User with id {user_id} not found'}
+    assert resp.json() == {"detail": f"User with id {user_id} not found."}

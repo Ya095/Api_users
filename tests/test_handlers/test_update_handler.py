@@ -7,14 +7,15 @@ async def test_update_user(client, create_user_in_database, get_user_from_databa
         "user_id": uuid4(),
         "name": "Egor",
         "surname": "Yakovlev",
-        "email": "egor@exemple.com",
-        "is_active": True
+        "email": "egor@example.com",
+        "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
 
     user_data_updated = {
         "name": "Ivan",
         "surname": "Ivanov",
-        "email": "ivan@exemple.com",
+        "email": "ivan@example.com",
     }
 
     await create_user_in_database(**user_data)
@@ -27,8 +28,8 @@ async def test_update_user(client, create_user_in_database, get_user_from_databa
     assert user_from_db["name"] == user_data_updated["name"]
     assert user_from_db["surname"] == user_data_updated["surname"]
     assert user_from_db["email"] == user_data_updated["email"]
-    assert user_from_db["is_active"] is user_data_updated["is_active"]
-    assert user_from_db["user_id"] == user_data_updated["user_id"]
+    assert user_from_db["is_active"] is user_data["is_active"]
+    assert user_from_db["user_id"] == user_data["user_id"]
 
 
 async def test_update_user_check_one_is_updated(client, create_user_in_database, get_user_from_database):
@@ -36,27 +37,30 @@ async def test_update_user_check_one_is_updated(client, create_user_in_database,
         "user_id": uuid4(),
         "name": "Egor",
         "surname": "Yakovlev",
-        "email": "egor@exemple.com",
+        "email": "egor@example.com",
         "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
     user_data_2 = {
         "user_id": uuid4(),
         "name": "Ivan",
         "surname": "Ivanov",
-        "email": "ivan@exemple.com",
+        "email": "ivan@example.com",
         "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
     user_data_3 = {
         "user_id": uuid4(),
         "name": "Petr",
         "surname": "Petr",
-        "email": "petr@exemple.com",
+        "email": "petr@example.com",
         "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
     user_data_updated = {
         "name": "Nikifor",
         "surname": "Nikiforov",
-        "email": "nik@exemple.com",
+        "email": "nik@example.com",
     }
 
     for user_data in [user_data_1, user_data_2, user_data_3]:
@@ -95,7 +99,7 @@ async def test_update_user_not_found_error(client):
     user_data_updated = {
         "name": "Ivan",
         "surname": "Ivanov",
-        "email": "cheburek@kek.com",
+        "email": "ivanov@example.com",
     }
     user_id = uuid4()
     resp = client.patch(f"/user/?user_id={user_id}", data=json.dumps(user_data_updated))
@@ -109,26 +113,28 @@ async def test_update_user_duplicate_email_error(client, create_user_in_database
         "user_id": uuid4(),
         "name": "Egor",
         "surname": "Yakovlev",
-        "email": "egor@exemple.com",
+        "email": "egor@example.com",
         "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
     user_data_2 = {
         "user_id": uuid4(),
         "name": "Ivan",
         "surname": "Ivanov",
-        "email": "ivan@exemple.com",
+        "email": "ivan@example.com",
         "is_active": True,
+        "hashed_password": "SampleHashPass"
     }
     user_data_updated = {
+        "name": "Egor",
+        "surname": "Yakovlev",
         "email": user_data_2["email"],
     }
     for user_data in [user_data_1, user_data_2]:
         await create_user_in_database(**user_data)
-    resp = client.patch(
-        f"/user/?user_id={user_data_1['user_id']}", data=json.dumps(user_data_updated)
-    )
+    resp = client.patch(f"/user/?user_id={user_data_1['user_id']}", data=json.dumps(user_data_updated))
     assert resp.status_code == 503
     assert (
-        'duplicate key value violates unique constraint "users_email_key"'
+        f'Key (email)=({user_data_2["email"]}) already exists'
         in resp.json()["detail"]
     )
