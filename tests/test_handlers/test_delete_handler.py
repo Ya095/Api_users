@@ -9,7 +9,8 @@ async def test_delete_user(client, create_user_in_database, get_user_from_databa
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
 
     await create_user_in_database(**user_data)
@@ -35,7 +36,8 @@ async def test_delete_user_not_found(client, create_user_in_database):
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
 
     await create_user_in_database(**user_data)
@@ -55,7 +57,8 @@ async def test_delete_user_unauth(client, create_user_in_database):
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
 
     await create_user_in_database(**user_data)
@@ -66,3 +69,5 @@ async def test_delete_user_unauth(client, create_user_in_database):
     )
     assert resp.status_code == 401
     assert resp.json() == {"detail": "Could not validate credentials"}
+
+

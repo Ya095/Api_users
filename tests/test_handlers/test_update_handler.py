@@ -10,7 +10,8 @@ async def test_update_user(client, create_user_in_database, get_user_from_databa
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
 
     user_data_updated = {
@@ -44,7 +45,8 @@ async def test_update_user_check_only_one_was_updated(client, create_user_in_dat
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
     user_data_2 = {
         "user_id": uuid4(),
@@ -52,7 +54,8 @@ async def test_update_user_check_only_one_was_updated(client, create_user_in_dat
         "surname": "Ivanov",
         "email": "ivan@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
     user_data_3 = {
         "user_id": uuid4(),
@@ -60,7 +63,8 @@ async def test_update_user_check_only_one_was_updated(client, create_user_in_dat
         "surname": "Petr",
         "email": "petr@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
     user_data_updated = {
         "name": "Nikifor",
@@ -111,7 +115,8 @@ async def test_update_user_not_found_error(client, create_user_in_database):
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
 
     user_data_updated = {
@@ -138,7 +143,8 @@ async def test_update_user_duplicate_email_error(client, create_user_in_database
         "surname": "Yakovlev",
         "email": "egor@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
     user_data_2 = {
         "user_id": uuid4(),
@@ -146,7 +152,8 @@ async def test_update_user_duplicate_email_error(client, create_user_in_database
         "surname": "Ivanov",
         "email": "ivan@example.com",
         "is_active": True,
-        "hashed_password": "SampleHashPass"
+        "hashed_password": "SampleHashPass",
+        "roles": ["ROLE_PORTAL_USER"]
     }
     user_data_updated = {
         "name": "Egor",
