@@ -52,7 +52,13 @@ async def get_user_by_id(
     user = await _get_user_by_id(user_id, db)
     if user is None:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
-    return user
+    return ShowUser(
+        user_id=user.user_id,
+        name=user.name,
+        surname=user.surname,
+        email=user.email,
+        is_active=user.is_active
+    )
 
 
 @user_router.patch("/", response_model=UpdateUserResponse)
